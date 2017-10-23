@@ -65,8 +65,7 @@ module.exports = (app, db) => {
   app.delete('/users/:id', function (req, res) {
     const userId = req.params.id;
     db.User.destroy({ where: { id: userId } }).then(() => {
-      console.log(`User with id ${userId} has been deleted`);
-      res.status(204).send();
+      res.json({ message: "User successfully deleted!"});
     });
   });
 };
