@@ -2,6 +2,7 @@ const should = require('should'),
 supertest = require('supertest');
 const express = require('express');
 const bodyParser = require('body-parser');
+var assert = require('assert');
 db = require('../server/config/db.js');
 router = require('../server/router/index');
 const app = express();
