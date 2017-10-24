@@ -7,7 +7,7 @@ router = require('../server/router/index');
 const app = express();
 app.use(bodyParser.json());
 router(app, db);
-
+const should = require('should');
 
 describe('CRUD OPERATIONS /users', function() {
 
