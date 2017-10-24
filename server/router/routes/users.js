@@ -10,8 +10,13 @@ module.exports = (app, db) => {
   //GET single user by id
   app.get('/users/:id', function (req, res) {
     db.User.findOne({ where: { id: req.params.id } }).then((User) => {
-      res.json(User);
-    });
+      if (!User) {
+        res.status(404).send(); 
+        return         
+      }     
+      return res.json(User);
+    })
+    
   });
 
     //GET single user by firstName
@@ -23,7 +28,7 @@ module.exports = (app, db) => {
 
 
   // POST single user
-  app.post('/users/', function (req, res) {
+  app.post('/users/', function post(req, res) {
     db.User.create({
       personid: req.body.personid,
       firstName: req.body.firstName,
@@ -35,6 +40,7 @@ module.exports = (app, db) => {
       lastName: req.body.lastName
     }).then((data) => {
       res.json(data);
+      // res.status(201).send();
     });
   });
 
@@ -65,7 +71,8 @@ module.exports = (app, db) => {
   app.delete('/users/:id', function (req, res) {
     const userId = req.params.id;
     db.User.destroy({ where: { id: userId } }).then(() => {
-      res.json({ message: "User successfully deleted!"});
+      console.log(`User with id ${userId} has been deleted or not exist`);
+      res.status(204).send();
     });
   });
 };
