@@ -29,7 +29,7 @@ module.exports = (app, db) => {
   //GET single user by firstName
   app.get('/name/:firstName', function (req, res) {
     db.User.findAll({ where: { firstName: { [Op.like]: '%' + req.params.firstName + '%'} }}).then((User) => {
-      if (res.body == null) {
+      if (res.body == 'undefined') {
         res.status(404).send(); 
         return;
       }  
@@ -45,7 +45,7 @@ module.exports = (app, db) => {
   // POST single user
   app.post('/users/', function post(req, res) {
     db.User.create({
-      id: req.body.id,
+      // id: req.body.id,
       personid: req.body.personid,
       firstName: req.body.firstName,
       birthday: req.body.birthday,
@@ -55,10 +55,21 @@ module.exports = (app, db) => {
       phone: req.body.phone,
       lastName: req.body.lastName
     }).then((data) => {
-      res.status(201).json(data);
+      if (req.body.personid == null || 
+          req.body.firstName == null ||
+          req.body.birthday == null ||
+          req.body.maritalstatus == null ||
+          req.body.yearsOfExperience == null ||
+          req.body.skills == null ||
+          req.body.phone == null ||
+          req.body.lastName == null) 
+          {
+        throw new Error('Not all data is filled out');
+      } 
+      return res.status(201).json(data);
     })
     .catch((err) => {
-      res.status(500).json({
+      res.status(400).json({
         message:err.message
   });
     });
@@ -74,7 +85,10 @@ module.exports = (app, db) => {
         if (!User) {
           throw new Error('User doesn\'t exist');          
         }
-
+        return
+        if (req.params.id == null) {
+          res.status(404).send();         
+        }
         return User.updateAttributes(req.body)
       })
       .then(updatedUser => {
