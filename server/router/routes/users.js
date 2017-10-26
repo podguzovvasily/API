@@ -59,9 +59,9 @@ module.exports = (app, db) => {
           req.body.firstName == null ||
           req.body.birthday == null ||
           req.body.maritalstatus == null ||
-          req.body.yearsOfExperience == null ||
-          req.body.skills == null ||
-          req.body.phone == null ||
+          //req.body.yearsOfExperience == null ||
+          //req.body.skills == null ||
+          //req.body.phone == null ||
           req.body.lastName == null) 
           {
         throw new Error('Not all data is filled out');
@@ -83,11 +83,7 @@ module.exports = (app, db) => {
       })
       .then(User => {
         if (!User) {
-          throw new Error('User doesn\'t exist');          
-        }
-        return
-        if (req.params.id == null) {
-          res.status(404).send();         
+          throw new Error('User doesn\'t exist');         
         }
         return User.updateAttributes(req.body)
       })
@@ -102,10 +98,19 @@ module.exports = (app, db) => {
   });
 
   //DELETE single user
-  app.delete('/users/:id', function (req, res) {
-    const userId = req.params.id;
-    db.User.destroy({ where: { id: userId } }).then(() => {
-      console.log(`User with id ${userId} has been deleted or not exist`);
+  app.delete('/users/:id', (req, res) => {
+    db.User
+    .findOne({
+      where: { id: req.params.id }
+    })
+    .then(User => {
+      if (!User) {
+        throw new Error('User doesn\'t exist');         
+      }
+      return db.User.destroy({ where: { id: req.params.id } })
+    })
+    .then(() => {
+      console.log(`User with id ${req.params.id} has been deleted`);
       res.status(204).send();
     })
     .catch((err) => {
